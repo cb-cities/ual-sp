@@ -21,8 +21,8 @@ bool abm::Router::read_od_pairs(const std::string& filename, int nagents) {
   return status;
 }
 
-std::vector<std::array<abm::graph::vertex_t, 2>> abm::Router::compute_routes(
-    int mpi_rank, int mpi_size) {
+std::vector<abm::graph::vertex_t> abm::Router::compute_routes(int mpi_rank,
+                                                              int mpi_size) {
 
   std::vector<std::array<abm::graph::vertex_t, 2>> od_pairs;
 #ifdef USE_MPI
@@ -50,7 +50,7 @@ std::vector<std::array<abm::graph::vertex_t, 2>> abm::Router::compute_routes(
 #endif
 
   // Paths (vector of edges)
-  std::vector<std::array<abm::graph::vertex_t, 2>> paths;
+  std::vector<abm::graph::vertex_t> paths;
   paths.reserve(graph_->nedges());
 
   // Indices of start of path and length for each agent
@@ -59,7 +59,7 @@ std::vector<std::array<abm::graph::vertex_t, 2>> abm::Router::compute_routes(
 
 #pragma omp parallel for schedule(dynamic)
   for (abm::graph::vertex_t i = 0; i < od_pairs.size(); ++i) {
-    const auto sp = graph_->dijkstra_vertices(od_pairs[i][0], od_pairs[i][1]);
+    const auto sp = graph_->dijkstra_edges(od_pairs[i][0], od_pairs[i][1]);
 #pragma omp critical
     {
       paths_idx.emplace_back(std::array<abm::graph::vertex_t, 3>(
@@ -70,7 +70,7 @@ std::vector<std::array<abm::graph::vertex_t, 2>> abm::Router::compute_routes(
   }
 
   // Get all paths and indices
-  all_paths_ = abm::gather_vector_arrays(paths);
+  all_paths_ = abm::gather_vectors_ids(paths);
   all_paths_idx_ = abm::gather_vector_arrays(paths_idx);
 
 #ifdef USE_MPI

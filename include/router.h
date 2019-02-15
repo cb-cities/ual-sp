@@ -34,8 +34,7 @@ class Router {
   }
 
   //! Compute routes
-  std::vector<std::array<abm::graph::vertex_t, 2>> compute_routes(int mpi_rank,
-                                                                  int mpi_size);
+  std::vector<abm::graph::vertex_t> compute_routes(int mpi_rank, int mpi_size);
 
  private:
   //! Graph
@@ -43,7 +42,7 @@ class Router {
   //! All OD pairs
   std::vector<std::array<abm::graph::vertex_t, 2>> all_od_pairs_;
   //! All paths
-  std::vector<std::array<abm::graph::vertex_t, 2>> all_paths_;
+  std::vector<abm::graph::vertex_t> all_paths_;
   //! All paths indices
   std::vector<std::array<abm::graph::vertex_t, 3>> all_paths_idx_;
 };

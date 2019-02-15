@@ -294,8 +294,11 @@ std::vector<abm::graph::vertex_t> abm::Graph::dijkstra_edges(
     // Reverse to arrange from source to destination
     for (auto itr = path.begin(); itr != path.end() - 1; ++itr) {
       auto nitr = itr + 1;
-      if (itr != path.end())
-        route_edges.emplace_back(edge_ids_.at(std::make_tuple(*itr, *nitr)));
+      if (itr != path.end()) {
+        auto map_itr = edge_ids_.find(std::make_tuple(*itr, *nitr));
+        if (map_itr != edge_ids_.end())
+          route_edges.emplace_back((*map_itr).second);
+      }
     }
   }
   return route_edges;
