@@ -39,6 +39,34 @@ std::vector<std::array<Tdatatype, Tnsize>> gather_vector_arrays(
 #endif
 }
 
+template <typename Tdatatype>
+std::vector<Tdatatype> gather_vectors_ids(std::vector<Tdatatype> const& x) {
+#ifdef USE_MPI
+
+  int mpi_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+
+  unsigned x_size = x.size();
+  std::vector<int> x_sizes(mpi_size);
+  MPI_Gather(&x_size, 1, MPI_INT, x_sizes.data(), 1, MPI_INT, 0,
+             MPI_COMM_WORLD);
+
+  std::vector<Tdatatype> all_x(
+      std::accumulate(x_sizes.begin(), x_sizes.end(), 0));
+  auto x_scan = x_sizes;
+  std::partial_sum(x_scan.begin(), x_scan.end(), x_scan.begin());
+  x_scan.insert(x_scan.begin(), 0);
+
+  MPI_Gatherv(x.data(), x.size(), MPI_LONG_LONG_INT, all_x.data(),
+              x_sizes.data(), x_scan.data(), MPI_LONG_LONG_INT, 0,
+              MPI_COMM_WORLD);
+
+  return all_x;
+#else
+  return x;
+#endif
+}
+
 }  // namespace abm
 
 #endif  // _ABM_MPI_H_
