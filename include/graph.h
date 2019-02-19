@@ -14,9 +14,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "csv.h"
-#include "tsl/robin_map.h"
+#include <sparsepp/spp.h>
+#include <tsl/robin_map.h>
 
+#include "csv.h"
 #include "config.h"
 
 namespace abm {
@@ -128,15 +129,15 @@ class Graph {
   std::map<std::tuple<graph::vertex_t, graph::vertex_t>, std::shared_ptr<Edge>>
       edges_;
   // adjacency list with iteration over each edge
-  tsl::robin_map<graph::vertex_t, std::vector<std::shared_ptr<Edge>>>
+  spp::sparse_hash_map<graph::vertex_t, std::vector<std::shared_ptr<Edge>>>
       vertex_edges_;
   // Vertices and counts
-  tsl::robin_map<graph::vertex_t, graph::vertex_t> vertices_;
+  spp::sparse_hash_map<graph::vertex_t, graph::vertex_t> vertices_;
   // Global edges
   std::map<std::tuple<graph::vertex_t, graph::vertex_t>, graph::vertex_t>
       edge_ids_;
   // Vertices and counts
-  tsl::robin_map<graph::vertex_t, graph::weight_t> edge_costs_;
+  spp::sparse_hash_map<graph::vertex_t, graph::weight_t> edge_costs_;
 };
 
 }  // namespace abm
