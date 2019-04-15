@@ -25,6 +25,7 @@ std::vector<abm::graph::vertex_t> abm::Router::compute_routes(int mpi_rank,
                                                               int mpi_size) {
 
   std::vector<std::array<abm::graph::vertex_t, 2>> od_pairs;
+  /*
 #ifdef USE_MPI
   // Create MPI pair type
   MPI_Datatype pair_t;
@@ -45,10 +46,12 @@ std::vector<abm::graph::vertex_t> abm::Router::compute_routes(int mpi_rank,
     od_pairs.insert(od_pairs.begin(), all_od_pairs_.end() - chunk_remainder,
                     all_od_pairs_.end());
   }
-#else
-  od_pairs = all_od_pairs_;
 #endif
-
+  
+#else
+*/
+  od_pairs = all_od_pairs_;
+//#endif
   // Paths (vector of edges)
   std::vector<abm::graph::vertex_t> paths;
   paths.reserve(graph_->nedges());
@@ -72,10 +75,10 @@ std::vector<abm::graph::vertex_t> abm::Router::compute_routes(int mpi_rank,
   // Get all paths and indices
   all_paths_ = abm::gather_vectors_ids(paths);
   all_paths_idx_ = abm::gather_vector_arrays(paths_idx);
-
+/*
 #ifdef USE_MPI
   MPI_Type_free(&pair_t);
 #endif
-
+*/
   return all_paths_;
 }

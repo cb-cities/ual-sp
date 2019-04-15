@@ -92,7 +92,7 @@ bool abm::Graph::read_graph_matrix_market(const std::string& filename) {
         std::istringstream istream(line);
         int v1, v2;
         double weight;
-        unsigned nvertices;
+        unsigned nvertices = 0;
         // ignore comment lines (# or !) or blank lines
         if ((line.find('#') == std::string::npos) &&
             (line.find('%') == std::string::npos) && (line != "")) {
@@ -125,6 +125,7 @@ bool abm::Graph::read_graph_matrix_market(const std::string& filename) {
 // Read MatrixMarket graph file format
 bool abm::Graph::read_graph_osm(const std::string& filename) {
   bool status = true;
+  unsigned nvertices;
   try {
     io::CSVReader<4> in(filename);
     in.read_header(io::ignore_extra_column, "uniqueid", "u", "v", "length");
@@ -300,6 +301,7 @@ std::vector<abm::graph::vertex_t> abm::Graph::dijkstra_edges(
           route_edges.emplace_back((*map_itr).second);
       }
     }
+    route_edges.emplace_back(-1);
   }
   return route_edges;
 }
